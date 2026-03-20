@@ -1,11 +1,108 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ar" dir="rtl">
 <head>
+    <meta charset="UTF-8">
+    <title>Tasbeeh</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            width: 240px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #f7f7f7;
+            color: #1a1a1a;
+        }
+
+        .header {
+            background: #2e7d52;
+            color: #fff;
+            text-align: center;
+            padding: 14px 12px 12px;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+        .header span { opacity: 0.7; font-size: 11px; display: block; margin-top: 2px; }
+
+        .section-title {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px 14px 6px;
+        }
+
+        .themes { padding: 0 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+
+        .theme-card {
+            border-radius: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s, transform 0.15s;
+            position: relative;
+        }
+        .theme-card:hover { transform: scale(1.01); }
+        .theme-card.selected { border-color: #2e7d52; }
+        .theme-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            font-size: 13px;
+            color: #2e7d52;
+            font-weight: bold;
+        }
+
+        .theme-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+        .theme-desc { font-size: 11px; opacity: 0.65; }
+
+        .card-modern {
+            background: #ffffff;
+            border-color: #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .card-modern .theme-name { color: #1a1a1a; }
+
+        .card-dark {
+            background: #12121f;
+            box-shadow: 0 0 12px rgba(212,175,55,0.15);
+        }
+        .card-dark .theme-name { color: #d4af37; }
+        .card-dark .theme-desc { color: #e8d5a3; }
+        .card-dark.selected::after { color: #d4af37; }
+
+        .card-minimal {
+            background: #fafafa;
+            border-color: #ebebeb;
+        }
+        .card-minimal .theme-name { color: #555; }
+    </style>
 </head>
-
 <body>
+    <div class="header">
+        ✦ تسبيح
+        <span>اختر المظهر</span>
+    </div>
 
+    <p class="section-title">المظهر</p>
+
+    <div class="themes">
+        <div class="theme-card card-modern" data-theme="modern">
+            <div class="theme-name">عصري ونظيف</div>
+            <div class="theme-desc">خلفية بيضاء · لون أخضر إسلامي</div>
+        </div>
+
+        <div class="theme-card card-dark" data-theme="dark">
+            <div class="theme-name">داكن وأنيق</div>
+            <div class="theme-desc">خلفية داكنة · نص ذهبي</div>
+        </div>
+
+        <div class="theme-card card-minimal" data-theme="minimal">
+            <div class="theme-name">بسيط وخفيف</div>
+            <div class="theme-desc">شفاف وغير مزعج</div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
 </body>
-
 </html>
