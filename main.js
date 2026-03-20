@@ -1,3 +1,5 @@
+try { // guard against "Extension context invalidated" on extension reload
+
 const tasbeehPhrases = [
     'سُبْحَانَ اللَّهِ',
     'الْحَمْدُ لِلَّهِ',
@@ -100,12 +102,16 @@ const getPhrase = (azkarMode, callback) => {
         const label = isMorning ? '✦ أذكار الصباح' : '✦ أذكار المساء';
 
         const winKey = `__tasbeeh_${indexKey}`;
+        const dateKey = indexKey + 'Date';
+        const today = new Date().toDateString();
+
         const readIndex = (cb) => {
             try {
-                if (typeof chrome !== 'undefined' && chrome.storage?.session) {
-                    chrome.storage.session.get({ [indexKey]: 0 }, (d) => {
+                if (typeof chrome !== 'undefined' && chrome.storage?.local) {
+                    chrome.storage.local.get({ [indexKey]: 0, [dateKey]: '' }, (d) => {
                         if (chrome.runtime?.lastError) { cb(window[winKey] || 0); return; }
-                        cb(d[indexKey]);
+                        // Reset index if it's a new day
+                        cb(d[dateKey] === today ? d[indexKey] : 0);
                     });
                 } else {
                     cb(window[winKey] || 0);
@@ -119,8 +125,8 @@ const getPhrase = (azkarMode, callback) => {
 
             window[winKey] = index + 1;
             try {
-                if (typeof chrome !== 'undefined' && chrome.storage?.session) {
-                    chrome.storage.session.set({ [indexKey]: index + 1 });
+                if (typeof chrome !== 'undefined' && chrome.storage?.local) {
+                    chrome.storage.local.set({ [indexKey]: index + 1, [dateKey]: today });
                 }
             } catch (e) {}
 
@@ -296,3 +302,5 @@ const showContainer = () => {
 let currentIntervalMs = null;
 
 try { showContainer(); } catch (e) {}
+
+} catch (e) {} // end top-level guard
