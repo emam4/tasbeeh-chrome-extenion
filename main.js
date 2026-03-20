@@ -83,15 +83,21 @@ if (!document.getElementById('tasbeeh-styles')) {
     document.head.appendChild(style);
 }
 
-const getTheme = (callback) => {
+const getSettings = (callback) => {
+    const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5 };
     if (typeof chrome !== 'undefined' && chrome.storage) {
-        chrome.storage.sync.get({ theme: 'modern' }, (data) => callback(data.theme));
+        chrome.storage.sync.get(defaults, callback);
     } else {
-        callback(window.__tasbeehTheme || 'modern');
+        callback({
+            theme: window.__tasbeehTheme || 'modern',
+            duration: window.__tasbeehDuration || 15,
+            fontSize: window.__tasbeehFontSize || 20,
+            interval: window.__tasbeehInterval || 5,
+        });
     }
 };
 
-const buildContainer = (themeName) => {
+const buildContainer = (themeName, fontSize) => {
     const t = themes[themeName] || themes.modern;
 
     const container = document.createElement('div');
@@ -167,7 +173,7 @@ const buildContainer = (themeName) => {
     phrase.textContent = tasbeehPhrases[Math.floor(Math.random() * tasbeehPhrases.length)];
     Object.assign(phrase.style, {
         padding: '16px 18px',
-        fontSize: '21px',
+        fontSize: `${fontSize}px`,
         lineHeight: '1.8',
         color: t.color,
         fontFamily: '"Segoe UI", "Tahoma", "Arabic Typesetting", serif',
@@ -185,21 +191,31 @@ const animateOut = (container) => {
 };
 
 let currentContainer = null;
+let currentIntervalId = null;
 
 const showContainer = () => {
     if (currentContainer && document.body.contains(currentContainer)) {
         animateOut(currentContainer);
     }
-    getTheme((themeName) => {
-        currentContainer = buildContainer(themeName);
+    getSettings(({ theme, duration, fontSize, interval }) => {
+        currentContainer = buildContainer(theme, fontSize);
         document.body.appendChild(currentContainer);
         setTimeout(() => {
             if (currentContainer && document.body.contains(currentContainer)) {
                 animateOut(currentContainer);
             }
-        }, 15 * 1000);
+        }, duration * 1000);
+
+        // Restart interval if it changed
+        const intervalMs = interval * 60 * 1000;
+        if (!currentIntervalId || currentIntervalMs !== intervalMs) {
+            clearInterval(currentIntervalId);
+            currentIntervalMs = intervalMs;
+            currentIntervalId = setInterval(showContainer, intervalMs);
+        }
     });
 };
 
+let currentIntervalMs = null;
+
 showContainer();
-setInterval(showContainer, 30 * 1000);

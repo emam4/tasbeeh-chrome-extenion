@@ -31,7 +31,8 @@
             padding: 14px 14px 6px;
         }
 
-        .themes { padding: 0 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+        /* ── Theme cards ── */
+        .themes { padding: 0 10px 4px; display: flex; flex-direction: column; gap: 8px; }
 
         .theme-card {
             border-radius: 12px;
@@ -76,31 +77,88 @@
             border-color: #ebebeb;
         }
         .card-minimal .theme-name { color: #555; }
+
+        /* ── Chips (duration & font size) ── */
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 10px 14px; }
+
+        .chip {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1.5px solid #e0e0e0;
+            background: #fff;
+            color: #444;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .chip:hover { border-color: #2e7d52; color: #2e7d52; }
+        .chip.selected {
+            background: #2e7d52;
+            border-color: #2e7d52;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .divider { height: 1px; background: #ececec; margin: 2px 10px; }
     </style>
 </head>
 <body>
     <div class="header">
         ✦ تسبيح
-        <span>اختر المظهر</span>
+        <span>الإعدادات</span>
     </div>
 
+    <!-- Theme -->
     <p class="section-title">المظهر</p>
-
     <div class="themes">
         <div class="theme-card card-modern" data-theme="modern">
             <div class="theme-name">عصري ونظيف</div>
             <div class="theme-desc">خلفية بيضاء · لون أخضر إسلامي</div>
         </div>
-
         <div class="theme-card card-dark" data-theme="dark">
             <div class="theme-name">داكن وأنيق</div>
             <div class="theme-desc">خلفية داكنة · نص ذهبي</div>
         </div>
-
         <div class="theme-card card-minimal" data-theme="minimal">
             <div class="theme-name">بسيط وخفيف</div>
             <div class="theme-desc">شفاف وغير مزعج</div>
         </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Interval -->
+    <p class="section-title">الفترة بين كل تذكير</p>
+    <div class="chips" id="interval-chips">
+        <div class="chip" data-interval="1">دقيقة</div>
+        <div class="chip" data-interval="5">5 د</div>
+        <div class="chip" data-interval="10">10 د</div>
+        <div class="chip" data-interval="30">30 د</div>
+        <div class="chip" data-interval="60">ساعة</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Duration -->
+    <p class="section-title">مدة الظهور</p>
+    <div class="chips" id="duration-chips">
+        <div class="chip" data-duration="5">5 ث</div>
+        <div class="chip" data-duration="10">10 ث</div>
+        <div class="chip" data-duration="15">15 ث</div>
+        <div class="chip" data-duration="30">30 ث</div>
+        <div class="chip" data-duration="60">دقيقة</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Font size -->
+    <p class="section-title">حجم الخط</p>
+    <div class="chips" id="font-chips">
+        <div class="chip" data-fontsize="16">صغير</div>
+        <div class="chip" data-fontsize="20">متوسط</div>
+        <div class="chip" data-fontsize="26">كبير</div>
+        <div class="chip" data-fontsize="32">كبير جداً</div>
     </div>
 
     <script src="popup.js"></script>
