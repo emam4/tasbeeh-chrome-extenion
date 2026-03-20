@@ -1,25 +1,38 @@
-const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5 };
+const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right' };
 
 chrome.storage.sync.get(defaults, (settings) => {
-    // Mark selected theme
+    document.querySelector(`[data-azkar="${settings.azkarMode}"]`)?.classList.add('selected');
     document.querySelector(`[data-theme="${settings.theme}"]`)?.classList.add('selected');
-
-    // Mark selected interval
+    document.querySelector(`[data-position="${settings.position}"]`)?.classList.add('selected');
     document.querySelector(`[data-interval="${settings.interval}"]`)?.classList.add('selected');
-
-    // Mark selected duration
     document.querySelector(`[data-duration="${settings.duration}"]`)?.classList.add('selected');
-
-    // Mark selected font size
     document.querySelector(`[data-fontsize="${settings.fontSize}"]`)?.classList.add('selected');
 });
 
+// Azkar mode
+document.querySelectorAll('[data-azkar]').forEach(card => {
+    card.addEventListener('click', () => {
+        chrome.storage.sync.set({ azkarMode: card.dataset.azkar });
+        document.querySelectorAll('[data-azkar]').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+    });
+});
+
 // Theme
-document.querySelectorAll('.theme-card').forEach(card => {
+document.querySelectorAll('[data-theme]').forEach(card => {
     card.addEventListener('click', () => {
         chrome.storage.sync.set({ theme: card.dataset.theme });
-        document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('[data-theme]').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
+    });
+});
+
+// Position
+document.querySelectorAll('[data-position]').forEach(chip => {
+    chip.addEventListener('click', () => {
+        chrome.storage.sync.set({ position: chip.dataset.position });
+        document.querySelectorAll('[data-position]').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
     });
 });
 

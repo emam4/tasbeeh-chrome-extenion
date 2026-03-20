@@ -3,15 +3,21 @@ const tasbeehPhrases = [
     'الْحَمْدُ لِلَّهِ',
     'لَا إِلَهَ إِلَّا اللَّهُ',
     'اللَّهُ أَكْبَرُ',
+    'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
     'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
     'سُبْحَانَ اللَّهِ الْعَظِيمِ',
-    'اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد.',
-    'يَا رَبِّ , لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ , وَلِعَظِيمِ سُلْطَانِكَ.',
-    'أسْتَغْفِرُ اللهَ وَأتُوبُ إلَيْهِ.',
-    'لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.',
-    'حَسْبِـيَ اللّهُ لا إلهَ إلاّ هُوَ عَلَـيهِ تَوَكَّـلتُ وَهُوَ رَبُّ العَرْشِ العَظـيم.',
-    'رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ صلى الله عليه وسلم نَبِيّـاً.',
-    'اللّهُـمَّ إِنِّـي أَصْبَـحْتُ أُشْـهِدُك ، وَأُشْـهِدُ حَمَلَـةَ عَـرْشِـك ، وَمَلَائِكَتَكَ ، وَجَمـيعَ خَلْـقِك ، أَنَّـكَ أَنْـتَ اللهُ لا إلهَ إلاّ أَنْـتَ وَحْـدَكَ لا شَريكَ لَـك ، وَأَنَّ ُ مُحَمّـداً عَبْـدُكَ وَرَسـولُـك.'
+    'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ',
+    'لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ',
+    'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ',
+    'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيَّ الْقَيُّومَ، وَأَتُوبُ إِلَيْهِ',
+    'اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد',
+    'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
+    'يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ',
+    'يَا رَبِّ، لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ، وَلِعَظِيمِ سُلْطَانِكَ',
+    'لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ',
+    'حَسْبِـيَ اللّهُ لا إلهَ إلاّ هُوَ عَلَـيهِ تَوَكَّـلتُ وَهُوَ رَبُّ العَرْشِ العَظـيم',
+    'رَضِيتُ بِاللَّهِ رَبَّاً، وَبِالْإِسْلاَمِ دِيناً، وَبِمُحَمَّدٍ ﷺ نَبِيّاً',
+    'اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنَّا'
 ];
 
 const themes = {
@@ -58,54 +64,123 @@ const themes = {
 
 // Inject animation styles once
 if (!document.getElementById('tasbeeh-styles')) {
-    const style = document.createElement('style');
-    style.id = 'tasbeeh-styles';
-    style.textContent = `
-        @keyframes tasbeeh-in {
-            from { opacity: 0; transform: translateY(-10px) scale(0.96); }
-            to   { opacity: 1; transform: translateY(0)    scale(1);    }
-        }
-        @keyframes tasbeeh-out {
-            from { opacity: 1; transform: translateY(0)    scale(1);    }
-            to   { opacity: 0; transform: translateY(-8px) scale(0.97); }
-        }
-        #tasbeeh-container {
-            animation: tasbeeh-in 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
-        }
-        #tasbeeh-container.hiding {
-            animation: tasbeeh-out 0.3s ease forwards;
-        }
-        #tasbeeh-close:hover {
-            opacity: 0.8 !important;
-            transform: scale(1.1) !important;
-        }
-    `;
-    document.head.appendChild(style);
+    try {
+        const style = document.createElement('style');
+        style.id = 'tasbeeh-styles';
+        style.textContent = `
+            @keyframes tasbeeh-in {
+                from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+                to   { opacity: 1; transform: translateY(0)    scale(1);    }
+            }
+            @keyframes tasbeeh-out {
+                from { opacity: 1; transform: translateY(0)    scale(1);    }
+                to   { opacity: 0; transform: translateY(-8px) scale(0.97); }
+            }
+            #tasbeeh-container {
+                animation: tasbeeh-in 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+            }
+            #tasbeeh-container.hiding {
+                animation: tasbeeh-out 0.3s ease forwards;
+            }
+            #tasbeeh-close:hover {
+                opacity: 0.8 !important;
+                transform: scale(1.1) !important;
+            }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+    } catch (e) {}
 }
 
-const getSettings = (callback) => {
-    const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5 };
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-        chrome.storage.sync.get(defaults, callback);
+const getPhrase = (azkarMode, callback) => {
+    if (azkarMode === 'morning_evening') {
+        const hour = new Date().getHours();
+        const isMorning = hour >= 6 && hour < 16;
+        const array = isMorning ? azkatAlsabah : azkatAlmasaa;
+        const indexKey = isMorning ? 'sabahIndex' : 'masaaIndex';
+        const label = isMorning ? '✦ أذكار الصباح' : '✦ أذكار المساء';
+
+        const winKey = `__tasbeeh_${indexKey}`;
+        const readIndex = (cb) => {
+            try {
+                if (typeof chrome !== 'undefined' && chrome.storage?.session) {
+                    chrome.storage.session.get({ [indexKey]: 0 }, (d) => {
+                        if (chrome.runtime?.lastError) { cb(window[winKey] || 0); return; }
+                        cb(d[indexKey]);
+                    });
+                } else {
+                    cb(window[winKey] || 0);
+                }
+            } catch (e) { cb(window[winKey] || 0); }
+        };
+
+        readIndex((index) => {
+            const safeIndex = index % array.length;
+            const isLast = safeIndex === array.length - 1;
+
+            window[winKey] = index + 1;
+            try {
+                if (typeof chrome !== 'undefined' && chrome.storage?.session) {
+                    chrome.storage.session.set({ [indexKey]: index + 1 });
+                }
+            } catch (e) {}
+
+            // Auto-switch back to general after the last zikr
+            if (isLast) {
+                window.__tasbeehAzkarMode = 'general';
+                try {
+                    if (typeof chrome !== 'undefined' && chrome.storage?.sync) {
+                        chrome.storage.sync.set({ azkarMode: 'general' });
+                    }
+                } catch (e) {}
+            }
+
+            callback({ text: array[safeIndex].zekr, label });
+        });
     } else {
         callback({
-            theme: window.__tasbeehTheme || 'modern',
-            duration: window.__tasbeehDuration || 15,
-            fontSize: window.__tasbeehFontSize || 20,
-            interval: window.__tasbeehInterval || 5,
+            text: tasbeehPhrases[Math.floor(Math.random() * tasbeehPhrases.length)],
+            label: '✦ تسبيح',
         });
     }
 };
 
-const buildContainer = (themeName, fontSize) => {
+const getSettings = (callback) => {
+    const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right' };
+    const fromWindow = () => callback({
+        theme:     window.__tasbeehTheme     || defaults.theme,
+        duration:  window.__tasbeehDuration  || defaults.duration,
+        fontSize:  window.__tasbeehFontSize  || defaults.fontSize,
+        interval:  window.__tasbeehInterval  || defaults.interval,
+        azkarMode: window.__tasbeehAzkarMode || defaults.azkarMode,
+        position:  window.__tasbeehPosition  || defaults.position,
+    });
+    try {
+        if (typeof chrome !== 'undefined' && chrome.storage?.sync) {
+            chrome.storage.sync.get(defaults, (data) => {
+                if (chrome.runtime?.lastError) { fromWindow(); return; }
+                callback(data);
+            });
+        } else {
+            fromWindow();
+        }
+    } catch (e) { callback(defaults); }
+};
+
+const buildContainer = (themeName, fontSize, phraseText, labelText, position) => {
     const t = themes[themeName] || themes.modern;
+
+    const pos = {
+        'top-right':    { top: '20px',  right:  '20px', bottom: 'auto', left: 'auto'  },
+        'top-left':     { top: '20px',  left:   '20px', bottom: 'auto', right: 'auto' },
+        'bottom-right': { bottom: '20px', right: '20px', top:  'auto',  left: 'auto'  },
+        'bottom-left':  { bottom: '20px', left:  '20px', top:  'auto',  right: 'auto' },
+    }[position] || { top: '20px', right: '20px', bottom: 'auto', left: 'auto' };
 
     const container = document.createElement('div');
     container.id = 'tasbeeh-container';
     Object.assign(container.style, {
         position: 'fixed',
-        top: '20px',
-        right: '20px',
+        ...pos,
         maxWidth: '300px',
         width: 'fit-content',
         backgroundColor: t.bg,
@@ -130,7 +205,7 @@ const buildContainer = (themeName, fontSize) => {
     });
 
     const label = document.createElement('span');
-    label.textContent = '✦ تسبيح';
+    label.textContent = labelText;
     Object.assign(label.style, {
         fontSize: '11px',
         fontFamily: '"Segoe UI", Tahoma, sans-serif',
@@ -170,7 +245,7 @@ const buildContainer = (themeName, fontSize) => {
 
     // Phrase
     const phrase = document.createElement('div');
-    phrase.textContent = tasbeehPhrases[Math.floor(Math.random() * tasbeehPhrases.length)];
+    phrase.textContent = phraseText;
     Object.assign(phrase.style, {
         padding: '16px 18px',
         fontSize: `${fontSize}px`,
@@ -197,8 +272,9 @@ const showContainer = () => {
     if (currentContainer && document.body.contains(currentContainer)) {
         animateOut(currentContainer);
     }
-    getSettings(({ theme, duration, fontSize, interval }) => {
-        currentContainer = buildContainer(theme, fontSize);
+    getSettings(({ theme, duration, fontSize, interval, azkarMode, position }) => {
+        getPhrase(azkarMode, ({ text, label }) => {
+        currentContainer = buildContainer(theme, fontSize, text, label, position);
         document.body.appendChild(currentContainer);
         setTimeout(() => {
             if (currentContainer && document.body.contains(currentContainer)) {
@@ -213,9 +289,10 @@ const showContainer = () => {
             currentIntervalMs = intervalMs;
             currentIntervalId = setInterval(showContainer, intervalMs);
         }
-    });
+        }); // getPhrase
+    }); // getSettings
 };
 
 let currentIntervalMs = null;
 
-showContainer();
+try { showContainer(); } catch (e) {}

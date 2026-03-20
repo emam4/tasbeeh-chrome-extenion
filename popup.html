@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <title>Tasbeeh</title>
@@ -7,7 +7,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            width: 240px;
+            width: 360px;
             font-family: "Segoe UI", Tahoma, sans-serif;
             background: #f7f7f7;
             color: #1a1a1a;
@@ -32,11 +32,13 @@
         }
 
         /* ── Theme cards ── */
-        .themes { padding: 0 10px 4px; display: flex; flex-direction: column; gap: 8px; }
+        .themes { padding: 0 10px 4px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
 
         .theme-card {
+            flex: 1 1 0;
+            min-width: 0;
             border-radius: 12px;
-            padding: 12px 14px;
+            padding: 10px 10px;
             cursor: pointer;
             border: 2px solid transparent;
             transition: border-color 0.2s, transform 0.15s;
@@ -47,9 +49,9 @@
         .theme-card.selected::after {
             content: '✓';
             position: absolute;
-            top: 8px;
-            left: 10px;
-            font-size: 13px;
+            top: 6px;
+            right: 6px;
+            font-size: 11px;
             color: #2e7d52;
             font-weight: bold;
         }
@@ -78,7 +80,7 @@
         }
         .card-minimal .theme-name { color: #555; }
 
-        /* ── Chips (duration & font size) ── */
+        /* ── Chips ── */
         .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 10px 14px; }
 
         .chip {
@@ -105,60 +107,86 @@
 </head>
 <body>
     <div class="header">
-        ✦ تسبيح
-        <span>الإعدادات</span>
+        ✦ Tasbeeh
+        <span>Settings</span>
     </div>
 
+    <!-- Azkar mode -->
+    <p class="section-title">Azkar Type</p>
+    <div class="themes">
+        <div class="theme-card card-modern" data-azkar="general">
+            <div class="theme-name">General</div>
+            <div class="theme-desc">Random tasbeeh & istighfar</div>
+        </div>
+        <div class="theme-card card-modern" data-azkar="morning_evening">
+            <div class="theme-name">Morning & Evening</div>
+            <div class="theme-desc">Morning (6AM–4PM) · Evening (4PM–6AM)</div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
     <!-- Theme -->
-    <p class="section-title">المظهر</p>
+    <p class="section-title">Theme</p>
     <div class="themes">
         <div class="theme-card card-modern" data-theme="modern">
-            <div class="theme-name">عصري ونظيف</div>
-            <div class="theme-desc">خلفية بيضاء · لون أخضر إسلامي</div>
+            <div class="theme-name">Clean & Modern</div>
+            <div class="theme-desc">White bg · Islamic green</div>
         </div>
         <div class="theme-card card-dark" data-theme="dark">
-            <div class="theme-name">داكن وأنيق</div>
-            <div class="theme-desc">خلفية داكنة · نص ذهبي</div>
+            <div class="theme-name">Dark Elegant</div>
+            <div class="theme-desc">Dark bg · Gold text</div>
         </div>
         <div class="theme-card card-minimal" data-theme="minimal">
-            <div class="theme-name">بسيط وخفيف</div>
-            <div class="theme-desc">شفاف وغير مزعج</div>
+            <div class="theme-name">Minimal</div>
+            <div class="theme-desc">Light & unobtrusive</div>
         </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Position -->
+    <p class="section-title">Position</p>
+    <div class="chips">
+        <div class="chip" data-position="top-right">Top Right</div>
+        <div class="chip" data-position="top-left">Top Left</div>
+        <div class="chip" data-position="bottom-right">Bottom Right</div>
+        <div class="chip" data-position="bottom-left">Bottom Left</div>
     </div>
 
     <div class="divider"></div>
 
     <!-- Interval -->
-    <p class="section-title">الفترة بين كل تذكير</p>
-    <div class="chips" id="interval-chips">
-        <div class="chip" data-interval="1">دقيقة</div>
-        <div class="chip" data-interval="5">5 د</div>
-        <div class="chip" data-interval="10">10 د</div>
-        <div class="chip" data-interval="30">30 د</div>
-        <div class="chip" data-interval="60">ساعة</div>
+    <p class="section-title">Interval</p>
+    <div class="chips">
+        <div class="chip" data-interval="1">1 min</div>
+        <div class="chip" data-interval="5">5 min</div>
+        <div class="chip" data-interval="10">10 min</div>
+        <div class="chip" data-interval="30">30 min</div>
+        <div class="chip" data-interval="60">1 hr</div>
     </div>
 
     <div class="divider"></div>
 
     <!-- Duration -->
-    <p class="section-title">مدة الظهور</p>
-    <div class="chips" id="duration-chips">
-        <div class="chip" data-duration="5">5 ث</div>
-        <div class="chip" data-duration="10">10 ث</div>
-        <div class="chip" data-duration="15">15 ث</div>
-        <div class="chip" data-duration="30">30 ث</div>
-        <div class="chip" data-duration="60">دقيقة</div>
+    <p class="section-title">Display Duration</p>
+    <div class="chips">
+        <div class="chip" data-duration="5">5s</div>
+        <div class="chip" data-duration="10">10s</div>
+        <div class="chip" data-duration="15">15s</div>
+        <div class="chip" data-duration="30">30s</div>
+        <div class="chip" data-duration="60">1 min</div>
     </div>
 
     <div class="divider"></div>
 
     <!-- Font size -->
-    <p class="section-title">حجم الخط</p>
-    <div class="chips" id="font-chips">
-        <div class="chip" data-fontsize="16">صغير</div>
-        <div class="chip" data-fontsize="20">متوسط</div>
-        <div class="chip" data-fontsize="26">كبير</div>
-        <div class="chip" data-fontsize="32">كبير جداً</div>
+    <p class="section-title">Font Size</p>
+    <div class="chips">
+        <div class="chip" data-fontsize="16">Small</div>
+        <div class="chip" data-fontsize="20">Medium</div>
+        <div class="chip" data-fontsize="26">Large</div>
+        <div class="chip" data-fontsize="32">X-Large</div>
     </div>
 
     <script src="popup.js"></script>

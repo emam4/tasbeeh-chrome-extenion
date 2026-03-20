@@ -9,7 +9,7 @@
     },
     "content_scripts": [
         {
-            "js": ["main.js"],
+            "js": ["AzkarAlsaba7.js", "main.js"],
             "matches": [
                 "https://*/*"
             ]
