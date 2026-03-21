@@ -1,12 +1,24 @@
-const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right' };
+const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right', enabled: true };
+
+const toggle = document.getElementById('enabled-toggle');
+const toggleLabel = document.getElementById('toggle-label');
 
 chrome.storage.sync.get(defaults, (settings) => {
+    toggle.checked = settings.enabled !== false;
+    toggleLabel.textContent = toggle.checked ? 'Azkar Enabled' : 'Azkar Disabled';
+
     document.querySelector(`[data-azkar="${settings.azkarMode}"]`)?.classList.add('selected');
     document.querySelector(`[data-theme="${settings.theme}"]`)?.classList.add('selected');
     document.querySelector(`[data-position="${settings.position}"]`)?.classList.add('selected');
     document.querySelector(`[data-interval="${settings.interval}"]`)?.classList.add('selected');
     document.querySelector(`[data-duration="${settings.duration}"]`)?.classList.add('selected');
     document.querySelector(`[data-fontsize="${settings.fontSize}"]`)?.classList.add('selected');
+});
+
+// Enable / disable toggle
+toggle.addEventListener('change', () => {
+    chrome.storage.sync.set({ enabled: toggle.checked });
+    toggleLabel.textContent = toggle.checked ? 'Azkar Enabled' : 'Azkar Disabled';
 });
 
 // Azkar mode

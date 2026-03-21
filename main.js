@@ -109,9 +109,10 @@ const getPhrase = (azkarMode, callback) => {
             try {
                 if (typeof chrome !== 'undefined' && chrome.storage?.local) {
                     chrome.storage.local.get({ [indexKey]: 0, [dateKey]: '' }, (d) => {
-                        if (chrome.runtime?.lastError) { cb(window[winKey] || 0); return; }
-                        // Reset index if it's a new day
-                        cb(d[dateKey] === today ? d[indexKey] : 0);
+                        try {
+                            if (chrome.runtime?.lastError) { cb(window[winKey] || 0); return; }
+                            cb(d[dateKey] === today ? d[indexKey] : 0);
+                        } catch (e) { cb(window[winKey] || 0); }
                     });
                 } else {
                     cb(window[winKey] || 0);
@@ -151,7 +152,7 @@ const getPhrase = (azkarMode, callback) => {
 };
 
 const getSettings = (callback) => {
-    const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right' };
+    const defaults = { theme: 'modern', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right', enabled: true };
     const fromWindow = () => callback({
         theme:     window.__tasbeehTheme     || defaults.theme,
         duration:  window.__tasbeehDuration  || defaults.duration,
@@ -159,12 +160,15 @@ const getSettings = (callback) => {
         interval:  window.__tasbeehInterval  || defaults.interval,
         azkarMode: window.__tasbeehAzkarMode || defaults.azkarMode,
         position:  window.__tasbeehPosition  || defaults.position,
+        enabled:   window.__tasbeehEnabled   !== undefined ? window.__tasbeehEnabled : true,
     });
     try {
         if (typeof chrome !== 'undefined' && chrome.storage?.sync) {
             chrome.storage.sync.get(defaults, (data) => {
-                if (chrome.runtime?.lastError) { fromWindow(); return; }
-                callback(data);
+                try {
+                    if (chrome.runtime?.lastError) { fromWindow(); return; }
+                    callback(data);
+                } catch (e) { fromWindow(); }
             });
         } else {
             fromWindow();
@@ -278,14 +282,17 @@ const showContainer = () => {
     if (currentContainer && document.body.contains(currentContainer)) {
         animateOut(currentContainer);
     }
-    getSettings(({ theme, duration, fontSize, interval, azkarMode, position }) => {
+    getSettings(({ theme, duration, fontSize, interval, azkarMode, position, enabled }) => {
+        if (enabled === false) return;
         getPhrase(azkarMode, ({ text, label }) => {
         currentContainer = buildContainer(theme, fontSize, text, label, position);
         document.body.appendChild(currentContainer);
         setTimeout(() => {
-            if (currentContainer && document.body.contains(currentContainer)) {
-                animateOut(currentContainer);
-            }
+            try {
+                if (currentContainer && document.body.contains(currentContainer)) {
+                    animateOut(currentContainer);
+                }
+            } catch (e) {}
         }, duration * 1000);
 
         // Restart interval if it changed
@@ -293,7 +300,7 @@ const showContainer = () => {
         if (!currentIntervalId || currentIntervalMs !== intervalMs) {
             clearInterval(currentIntervalId);
             currentIntervalMs = intervalMs;
-            currentIntervalId = setInterval(showContainer, intervalMs);
+            currentIntervalId = setInterval(() => { try { showContainer(); } catch (e) {} }, intervalMs);
         }
         }); // getPhrase
     }); // getSettings
