@@ -1,4 +1,4 @@
-const defaults = { theme: 'auto', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right', enabled: true };
+const defaults = { theme: 'auto', duration: 15, fontSize: 20, interval: 5, azkarMode: 'general', position: 'top-right', enabled: true, ignoredDomains: [] };
 
 const toggle = document.getElementById('enabled-toggle');
 const toggleLabel = document.getElementById('toggle-label');
@@ -105,3 +105,83 @@ document.querySelectorAll('[data-fontsize]').forEach(chip => {
         chip.classList.add('selected');
     });
 });
+
+// Ignore domain logic
+const ignoreDomainBtn = document.getElementById('ignore-domain-btn');
+const resetIgnoreBtn = document.getElementById('reset-ignore-btn');
+
+if (ignoreDomainBtn && resetIgnoreBtn) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const activeTab = tabs[0];
+        if (activeTab && activeTab.url) {
+            try {
+                const url = new URL(activeTab.url);
+                if (!url.protocol.startsWith('http')) {
+                    ignoreDomainBtn.style.display = 'none';
+                    return;
+                }
+                const hostname = url.hostname;
+                
+                chrome.storage.sync.get(defaults, (settings) => {
+                    const ignored = settings.ignoredDomains || [];
+                    if (ignored.includes(hostname)) {
+                        ignoreDomainBtn.textContent = 'Domain Excluded';
+                        ignoreDomainBtn.style.opacity = '0.5';
+                        ignoreDomainBtn.style.cursor = 'default';
+                        ignoreDomainBtn.disabled = true;
+                    } else {
+                        ignoreDomainBtn.textContent = `Exclude ${hostname}`;
+                    }
+                    
+                    ignoreDomainBtn.addEventListener('click', () => {
+                        if (ignoreDomainBtn.disabled) return;
+                        
+                        chrome.storage.sync.get(defaults, (currentSettings) => {
+                            const updatedDomains = currentSettings.ignoredDomains || [];
+                            if (!updatedDomains.includes(hostname)) {
+                                updatedDomains.push(hostname);
+                                saveSetting('ignoredDomains', updatedDomains);
+                                
+                                ignoreDomainBtn.textContent = 'Domain Excluded';
+                                ignoreDomainBtn.style.opacity = '0.5';
+                                ignoreDomainBtn.style.cursor = 'default';
+                                ignoreDomainBtn.disabled = true;
+
+                                // Hide any active zikr on the page immediately
+                                chrome.tabs.sendMessage(activeTab.id, { action: 'hide-zikr' }, () => {
+                                    if (chrome.runtime.lastError) { /* ignore */ }
+                                });
+                            }
+                        });
+                    });
+                });
+            } catch(e) {
+                ignoreDomainBtn.style.display = 'none';
+            }
+        } else {
+            ignoreDomainBtn.style.display = 'none';
+        }
+    });
+
+    resetIgnoreBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        saveSetting('ignoredDomains', []);
+        
+        if (ignoreDomainBtn.disabled) {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                const activeTab = tabs[0];
+                if (activeTab && activeTab.url) {
+                    try {
+                        const url = new URL(activeTab.url);
+                        if (url.protocol.startsWith('http')) {
+                            ignoreDomainBtn.textContent = `Exclude ${url.hostname}`;
+                            ignoreDomainBtn.style.opacity = '1';
+                            ignoreDomainBtn.style.cursor = 'pointer';
+                            ignoreDomainBtn.disabled = false;
+                        }
+                    } catch(e) {}
+                }
+            });
+        }
+    });
+}

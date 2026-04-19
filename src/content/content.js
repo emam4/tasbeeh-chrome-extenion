@@ -161,7 +161,18 @@ try {
     // Listen for commands from the background service worker
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'show-zikr') {
-            showContainer(request.phrase, request.settings, request.zoomFactor);
+            chrome.storage.sync.get(['ignoredDomains'], (res) => {
+                const ignored = res.ignoredDomains || (request.settings && request.settings.ignoredDomains) || [];
+                if (ignored.includes(window.location.hostname)) {
+                    return; // Domain is ignored, do not show Tasbeeh
+                }
+                showContainer(request.phrase, request.settings, request.zoomFactor);
+            });
+            return true;
+        } else if (request.action === 'hide-zikr') {
+            if (currentContainer && document.body.contains(currentContainer)) {
+                animateOut(currentContainer);
+            }
         }
     });
 
