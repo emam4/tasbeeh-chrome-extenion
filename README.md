@@ -5,7 +5,7 @@ A modern, high-performance Chrome extension for periodic Islamic "Zikr" and "Tas
 ## Key Features
 
 - **Dynamic-Theme Support:** Tasbeeh detects dark pages and adapts accordingly.
-- **Customizable Intervals:** Set reminders from every 1 minute to 1 hour.
+- **Customizable Intervals:** Set reminders from every 5 minutes to 1 hour.
 - **Customizable position:** Set the position where Tasbeeh should appear.
 
 ## Screenshot
