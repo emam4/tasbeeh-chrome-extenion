@@ -125,27 +125,32 @@ if (ignoreDomainBtn && resetIgnoreBtn) {
                 chrome.storage.sync.get(defaults, (settings) => {
                     const ignored = settings.ignoredDomains || [];
                     if (ignored.includes(hostname)) {
-                        ignoreDomainBtn.textContent = 'Domain Excluded';
-                        ignoreDomainBtn.style.opacity = '0.5';
-                        ignoreDomainBtn.style.cursor = 'default';
-                        ignoreDomainBtn.disabled = true;
+                        ignoreDomainBtn.textContent = `Include ${hostname}`;
+                        ignoreDomainBtn.style.opacity = '0.7';
+                        ignoreDomainBtn.style.borderStyle = 'dashed';
                     } else {
                         ignoreDomainBtn.textContent = `Exclude ${hostname}`;
+                        ignoreDomainBtn.style.opacity = '1';
+                        ignoreDomainBtn.style.borderStyle = 'solid';
                     }
                     
                     ignoreDomainBtn.addEventListener('click', () => {
-                        if (ignoreDomainBtn.disabled) return;
-                        
                         chrome.storage.sync.get(defaults, (currentSettings) => {
-                            const updatedDomains = currentSettings.ignoredDomains || [];
-                            if (!updatedDomains.includes(hostname)) {
+                            let updatedDomains = currentSettings.ignoredDomains || [];
+                            if (updatedDomains.includes(hostname)) {
+                                updatedDomains = updatedDomains.filter(d => d !== hostname);
+                                saveSetting('ignoredDomains', updatedDomains);
+                                
+                                ignoreDomainBtn.textContent = `Exclude ${hostname}`;
+                                ignoreDomainBtn.style.opacity = '1';
+                                ignoreDomainBtn.style.borderStyle = 'solid';
+                            } else {
                                 updatedDomains.push(hostname);
                                 saveSetting('ignoredDomains', updatedDomains);
                                 
-                                ignoreDomainBtn.textContent = 'Domain Excluded';
-                                ignoreDomainBtn.style.opacity = '0.5';
-                                ignoreDomainBtn.style.cursor = 'default';
-                                ignoreDomainBtn.disabled = true;
+                                ignoreDomainBtn.textContent = `Include ${hostname}`;
+                                ignoreDomainBtn.style.opacity = '0.7';
+                                ignoreDomainBtn.style.borderStyle = 'dashed';
 
                                 // Hide any active zikr on the page immediately
                                 chrome.tabs.sendMessage(activeTab.id, { action: 'hide-zikr' }, () => {
