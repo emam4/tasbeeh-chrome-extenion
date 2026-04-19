@@ -1,0 +1,85 @@
+name: Create Chrome Extension Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g., 1.0.1)'
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Important: Fetch all history so we can commit back
+          fetch-depth: 0
+          # Use a ref that allows pushing back to the branch
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+
+      - name: Set Version Variables
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            echo "tag=v${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            # Strip 'v' from tag name for the manifest
+            CLEAN_VER=${GITHUB_REF_NAME#v}
+            echo "version=$CLEAN_VER" >> $GITHUB_OUTPUT
+            echo "tag=$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Manifest.json
+        run: |
+          jq --arg ver "${{ steps.vars.outputs.version }}" '.version = $ver' manifest.json > tmp.json && mv tmp.json manifest.json
+
+      - name: Commit & Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: bump version to ${{ steps.vars.outputs.version }} [skip ci]"
+          file_pattern: 'manifest.json'
+          # Force the push to the branch to avoid detached HEAD issues
+          branch: ${{ github.event.repository.default_branch }}
+          # Use create_tag: true for workflow_dispatch, but for tag pushes, 
+          # we manually handle the tag move to avoid the 'already exists' error
+          tagging_message: ${{ github.event_name == 'workflow_dispatch' && steps.vars.outputs.tag || '' }}
+          push_options: '--force' 
+
+      # Manual Tag Fix: If triggered by a tag, move the tag to the new commit
+      - name: Move Tag to New Commit
+        if: github.event_name == 'push'
+        run: |
+          git tag -f ${{ steps.vars.outputs.tag }}
+          git push origin ${{ steps.vars.outputs.tag }} --force
+
+      - name: Prepare Filenames
+        id: filenames
+        run: |
+          RAW_NAME=$(jq -r '.name' manifest.json)
+          CLEAN_NAME="${RAW_NAME// /_}"
+          echo "zip=${CLEAN_NAME}_${{ steps.vars.outputs.tag }}.zip" >> $GITHUB_OUTPUT
+
+      - name: Create Release Zip
+        run: |
+          zip -r "${{ steps.filenames.outputs.zip }}" . \
+          -x "assets/promo/*" ".git/*" ".github/*" ".gitignore" "*.md" ".gemini/*"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: "Release ${{ steps.vars.outputs.tag }}"
+          files: ${{ steps.filenames.outputs.zip }}
+          generate_release_notes: true
+          # Ensures the release points to the commit with the manifest change
+          target_commitish: ${{ github.event.repository.default_branch }}
