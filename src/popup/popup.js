@@ -170,23 +170,25 @@ if (ignoreDomainBtn && resetIgnoreBtn) {
 
     resetIgnoreBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        saveSetting('ignoredDomains', []);
-        
-        if (ignoreDomainBtn.disabled) {
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                const activeTab = tabs[0];
-                if (activeTab && activeTab.url) {
-                    try {
-                        const url = new URL(activeTab.url);
-                        if (url.protocol.startsWith('http')) {
-                            ignoreDomainBtn.textContent = `Exclude ${url.hostname}`;
-                            ignoreDomainBtn.style.opacity = '1';
-                            ignoreDomainBtn.style.cursor = 'pointer';
-                            ignoreDomainBtn.disabled = false;
-                        }
-                    } catch(e) {}
-                }
-            });
+        if (confirm('Are you sure you want to reset the ignore list?')) {
+            saveSetting('ignoredDomains', []);
+            
+            if (ignoreDomainBtn.disabled) {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    const activeTab = tabs[0];
+                    if (activeTab && activeTab.url) {
+                        try {
+                            const url = new URL(activeTab.url);
+                            if (url.protocol.startsWith('http')) {
+                                ignoreDomainBtn.textContent = `Exclude ${url.hostname}`;
+                                ignoreDomainBtn.style.opacity = '1';
+                                ignoreDomainBtn.style.cursor = 'pointer';
+                                ignoreDomainBtn.disabled = false;
+                            }
+                        } catch(e) {}
+                    }
+                });
+            }
         }
     });
 }
